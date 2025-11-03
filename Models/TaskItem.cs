@@ -1,0 +1,17 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace TaskTracker.Models
+{
+    public class TaskItem
+    {
+        public int Id { get; set; }
+
+        [Required, StringLength(100)]
+        public string Title { get; set; }
+
+        public bool IsDone { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+    }
+}
