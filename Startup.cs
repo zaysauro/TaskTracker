@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using TaskTracker.Data;
 
 namespace TaskTracker
@@ -16,14 +16,21 @@ namespace TaskTracker
         {
             services.AddDbContext<AppDbContext>(opt =>
                 opt.UseSqlite("Data Source=tasks.db"));
-            services.AddRazorPages();
+
+            services.AddRazorPages()
+                    .AddRazorRuntimeCompilation();
+
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        // injeta AppDbContext para garantir o banco
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext db)
         {
+            db.Database.EnsureCreated(); // cria tasks.db se não existir
+
             app.UseStaticFiles();
             app.UseRouting();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
