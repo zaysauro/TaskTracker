@@ -1,24 +1,54 @@
 @page
 @model TaskTracker.Pages.IndexModel
 @{
-    ViewData["Title"] = "TaskTracker";
+    ViewData["Title"] = "TaskTracker · Tarefas";
 }
 
-<h1>📝 Task Tracker</h1>
+<div class="row g-3 align-items-center mb-3">
+  <div class="col-12 col-md-8">
+    <form method="post" class="d-flex gap-2">
+      <input asp-for="NewTask.Title" class="form-control form-control-lg" placeholder="Nova tarefa..." />
+      <button class="btn btn-primary btn-lg" type="submit">Adicionar</button>
+    </form>
+    <span class="text-warning">@Html.ValidationMessage("NewTask.Title")</span>
+  </div>
+  <div class="col-12 col-md-4">
+    <form method="get" class="input-group">
+      <input name="search" value="@Model.Search" class="form-control" placeholder="Buscar..." />
+      <input type="hidden" name="filter" value="@Model.Filter" />
+      <button class="btn btn-outline-light" type="submit">OK</button>
+    </form>
+  </div>
+</div>
 
-<form method="post">
-    <input asp-for="NewTask.Title" placeholder="Nova tarefa..." />
-    <button type="submit">Adicionar</button>
-</form>
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item">
+    <a class="nav-link @(Model.Filter=="all"?"active":"")" href="/?filter=all&search=@Model.Search">Todas <span class="badge bg-secondary">@Model.CountAll</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link @(Model.Filter=="todo"?"active":"")" href="/?filter=todo&search=@Model.Search">Pendentes <span class="badge bg-secondary">@Model.CountTodo</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link @(Model.Filter=="done"?"active":"")" href="/?filter=done&search=@Model.Search">Concluídas <span class="badge bg-secondary">@Model.CountDone</span></a>
+  </li>
+</ul>
 
-<ul>
+@if (!Model.Tasks.Any())
+{
+    <div class="alert alert-secondary">Nada por aqui. Adicione uma tarefa! 👇</div>
+}
+
+<div class="list-group">
 @foreach (var task in Model.Tasks)
 {
-    <li>
-        <input type="checkbox" checked="@task.IsDone"
-               onchange="location.href='/?toggle=@task.Id'" />
+  <div class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" @(task.IsDone ? "checked" : "") onchange="location.href='/?toggle=@task.Id&filter=@Model.Filter&search=@Model.Search'">
+      <label class="form-check-label @(task.IsDone?"text-decoration-line-through text-secondary":"")">
         @task.Title
-        <a href="/?delete=@task.Id">❌</a>
-    </li>
+      </label>
+    </div>
+    <a class="btn btn-sm btn-outline-danger" href="/?delete=@task.Id&filter=@Model.Filter&search=@Model.Search">Excluir</a>
+  </div>
 }
-</ul>
+</div>
