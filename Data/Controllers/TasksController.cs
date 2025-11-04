@@ -16,8 +16,9 @@ namespace TaskTracker.Controllers
         public IActionResult GetTasks() => Ok(_context.Tasks.ToList());
 
         [HttpPost]
-        public IActionResult AddTask(TaskItem task)
+        public IActionResult AddTask([FromBody] TaskItem task)
         {
+            if (string.IsNullOrWhiteSpace(task.Title)) return BadRequest("Title required");
             _context.Tasks.Add(task);
             _context.SaveChanges();
             return Ok(task);
