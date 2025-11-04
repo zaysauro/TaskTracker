@@ -1,0 +1,24 @@
+@page
+@model TaskTracker.Pages.IndexModel
+@{
+    ViewData["Title"] = "TaskTracker";
+}
+
+<h1>📝 Task Tracker</h1>
+
+<form method="post">
+    <input asp-for="NewTask.Title" placeholder="Nova tarefa..." />
+    <button type="submit">Adicionar</button>
+</form>
+
+<ul>
+@foreach (var task in Model.Tasks)
+{
+    <li>
+        <input type="checkbox" checked="@task.IsDone"
+               onchange="location.href='/?toggle=@task.Id'" />
+        @task.Title
+        <a href="/?delete=@task.Id">❌</a>
+    </li>
+}
+</ul>
